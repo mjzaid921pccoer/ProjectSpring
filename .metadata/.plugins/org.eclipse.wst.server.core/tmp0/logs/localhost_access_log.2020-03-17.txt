@@ -1,0 +1,4 @@
+127.0.0.1 - - [17/Mar/2020:09:25:51 +0530] "GET / HTTP/1.1" 404 709
+127.0.0.1 - - [17/Mar/2020:09:25:52 +0530] "GET /ProjectSpring/AdmissionForm.jsp HTTP/1.1" 200 1164
+127.0.0.1 - - [17/Mar/2020:09:25:53 +0530] "GET /ProjectSpring/style.css HTTP/1.1" 404 682
+127.0.0.1 - - [17/Mar/2020:09:27:24 +0530] "POST /ProjectSpring/submitAdmissionForm HTTP/1.1" 200 237

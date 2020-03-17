@@ -1,0 +1,156 @@
+in Eclipse IDE Enterprise Edition
+(1)click on File>New>DynamicWebProject>ProjectName:"ProjectSpring">next>next>('CheckBox "Generate web.xml deployment descriptor"')>Finish
+
+(2)In ProjectExplorer Session: Click on JavaResources>src> ('create new package>"SpringPackage">finish')
+
+(3) At Location "WebContent>WEB-INF>lib>web.xml" REMOVE <welcome-file-list> tag and everything contents inside tag
+INSERT code below <display-name> tag>>
+  <!-- Add this{ -->		  
+		<servlet>
+		<servlet-name>spring-dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		</servlet>
+		<servlet-mapping>
+		<servlet-name>spring-dispatcher</servlet-name>
+		<url-pattern>/</url-pattern>
+		</servlet-mapping>
+  <!-- }SaveFile -->
+
+
+(4) At Location "WebContent>WEB-INF" Right Click (New>Others>XMLfile) name it as "spring-dispatcher-servlet.xml"
+Following code will be already provided that is:
+
+	<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:mvc="http://www.springframework.org/schema/mvc"
+		xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context.xsd"
+		xmlns:context="http://www.springframework.org/schema/context">
+		<mvc:annotation-driven/>
+		<context:annotation-config/>
+		<context:component-scan base-package="SpringPackage"/>
+		
+	</beans>
+
+	<!-- <NOTE:base-package="SpringPackage" holds package name we created during Step(2)>
+	
+After this what we have to do is:>>	
+(inside beans tag add following code that is <bean> tag content)
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		   <property name="prefix">
+				   <value>/</value>
+			   </property>
+		   <property name="suffix">
+		   <value>.jsp</value>
+			   </property>       
+	</bean>
+
+At final this file content looks like:
+	<?xml version="1.0" encoding="UTF-8"?>
+	<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:mvc="http://www.springframework.org/schema/mvc"
+		xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context.xsd"
+		xmlns:context="http://www.springframework.org/schema/context">
+		<mvc:annotation-driven/>
+		<context:annotation-config/>
+		<context:component-scan base-package="SpringPackage"/>
+		
+			   <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+				   <property name="prefix">
+						   <value>/</value>
+					   </property>
+				   <property name="suffix">
+				   <value>.jsp</value>
+					   </property>       
+			   </bean>
+	</beans>	
+
+
+(5)From folder "SpringLibrary(will be given by Sir)"containing filesNames{commons-logging-1.2.jar, spring-framework-4.0.4.RELEASE>libs(full folder) } Needed to COPY 
+and PASTE to location "WebContent>WEB-INF>lib" all 65files
+
+(4)At Location "WebContent" Right click (New>JSP file)>"AdmissionForm.jsp" Write Following Code:
+Inside Head Tag:
+<link rel = "stylesheet"   type = "text/css"  href = "style.css" />
+
+Inside Body Tag:
+<!--Note: form action value should be "/ProjectName/requested_jsp_alias" example :/ProjectSpring/submitAdmissionForm-->
+<div>
+	<h1 align="center">Student Admission Form</h1>
+	<form action="/ProjectSpring/submitAdmissionForm" method="post">
+		<label><b>Username</b></label>
+		<input type="text" name="studentname" placeholder= "Username" required="required" onfocus="this.value = '';">
+		<br> <label><b>Password</b></label>
+		<input type="password" name="password" id="password" placeholder="password" required="required" onfocus="this.value = '';">     
+		<br><label><b>Mobile Number</b></label>
+		<input type="text" name="mobile" id="mobile" placeholder= "Mobile Number" required="required" onfocus="this.value = '';">
+		<br><label><b>E-Mail Address</b></label>
+		<input type="text" name="email" id="email" placeholder= "E-Mail Address" required="required" onfocus="this.value = '';"> 
+		<br><label><b>Age</b></label>
+		<input type="text" name="age" id="age" placeholder= "Age" required="required" onfocus="this.value = '';">    
+		<br><input type="submit" value="Register">   
+	</form>
+</div>
+
+(6)Inside click on Java Resources>src>"SpringPackage"> Right click select New>"java Class@ file name it as "StudentAdmissionController"
+write following code:
+package SpringPackage;
+		import java.util.Map;
+		import org.springframework.stereotype.Controller;
+		import org.springframework.web.bind.annotation.PathVariable;
+		import org.springframework.web.bind.annotation.RequestMapping;
+		import org.springframework.web.bind.annotation.RequestMethod;
+		import org.springframework.web.bind.annotation.RequestParam;
+		import org.springframework.web.servlet.ModelAndView;
+		@Controller
+		public class StudentAdmissionController 
+		{
+			@RequestMapping(value="/admissionForm", method=RequestMethod.GET)
+			protected ModelAndView myMethod1()
+			{        
+				ModelAndView mv=new ModelAndView("AdmissionForm");        
+				return mv;
+			}    
+
+		@RequestMapping(value="/submitAdmissionForm", method=RequestMethod.POST)
+		protected ModelAndView myMethod2(
+				@RequestParam("studentname") String name, 
+				@RequestParam("password") String password,
+				@RequestParam("mobile") String mobile,
+				@RequestParam("email") String email,
+				@RequestParam("age") String age)
+			{
+				ModelAndView mv=new ModelAndView("AdmissionSuccess");
+				mv.addObject("WelcomeMessage","Details are : <br>Name :"+name+"<br>Password:  "+password+"<br>Mobile No : "
+						+mobile + "<br>E-Mail : "+email+"<br>Age : "+age);
+				return mv;
+			}    
+		} 
+
+
+(7)At Location "WebContent" Right click (New>JSP file)>"AdmissionSuccess.jsp" Write Following Code:
+	inside body tag
+	<h2>${WelcomeMessage}</h2>
+
+
+
+(8)Select AdmissionForm.jsp file And now 
+	Click on "Run On Server">Manually define a new server>Select the server type:>("Apache>Tomcat v8.5 Server")
+	>Next>"Select Tomcatv8.5.51 installation directory>Browse(:Apache Tomcatv8.5.51 folder will be provided by sir)">next>Finish
+	AdmissionForm.jsp will be run on server
+	after which you can see a webpage to fill registeration detail 
+	before which on browsed link edit "/AdmissionForm.jsp" to "/admissionForm"
+	And then Fill form click on button it will navigate you to welcome msg with detail filled That is admission Sucess .jsp 
+
